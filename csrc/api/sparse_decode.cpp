@@ -454,6 +454,9 @@ sparse_attn_decode_interface(
         } else {
             STD_TORCH_CHECK(false, "Unsupported h_q: ", h_q);
         }
+    } else if (arch.is_sm110a()) {
+        STD_TORCH_CHECK(h_q == 64, "Sparse decode on SM110a supports only h_q == 64, got ", h_q);
+        impl = new Decode_Sm100_Head64_Impl();
     } else if (arch.is_sm90a()) {
         impl = new Decode_Sm90_Impl();
     } else {
