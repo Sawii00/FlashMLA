@@ -53,6 +53,11 @@ struct Arch {
     bool is_sm100f() const {
         return major == 10;
     }
+
+    // Thor. Runs only the legacy SM100 head64 sparse kernels (V3.2 / V4), built for sm_110a.
+    bool is_sm110a() const {
+        return major == 11 && minor == 0;
+    }
 };
 
 // Convert int64_t stride to int32_t, with overflow check.
