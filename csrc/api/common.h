@@ -54,7 +54,8 @@ struct Arch {
         return major == 10;
     }
 
-    // Thor. Runs only the legacy SM100 head64 sparse kernels (V3.2 / V4), built for sm_110a.
+    // Thor. Only the SM100 sparse kernels validated on it are dispatched, see
+    // sparse_decode.cpp and sparse_prefill.cpp.
     bool is_sm110a() const {
         return major == 11 && minor == 0;
     }

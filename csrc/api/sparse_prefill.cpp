@@ -305,9 +305,17 @@ std::vector<Tensor> sparse_attn_prefill_interface(
             STD_TORCH_CHECK(false, "Unsupported h_q: ", h_q);
         }
     } else if (is_sm110a) {
-        STD_TORCH_CHECK(h_q == 64 && d_qk == 576, "Sparse prefill on SM110a supports only h_q == 64 with d_qk == 576, got h_q ", h_q, ", d_qk ", d_qk);
-        Fwd_Sm100_Head64_HeadDim576_Impl fwd_impl;
-        fwd_impl.run(params, required_features);
+        // Only the d_qk 576 kernels kept under legacy/ have been validated on SM110a.
+        STD_TORCH_CHECK(d_qk == 576, "Sparse prefill on SM110a supports only d_qk == 576, got ", d_qk);
+        if (h_q == 64) {
+            Fwd_Sm100_Head64_HeadDim576_Impl fwd_impl;
+            fwd_impl.run(params, required_features);
+        } else if (h_q == 128) {
+            Fwd_Sm100_Head128_HeadDim576_Impl fwd_impl;
+            fwd_impl.run(params, required_features);
+        } else {
+            STD_TORCH_CHECK(false, "Unsupported h_q: ", h_q);
+        }
     } else {
         STD_TORCH_CHECK(false, "Unsupported architecture");
     }
