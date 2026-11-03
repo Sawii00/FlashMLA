@@ -217,7 +217,7 @@ std::vector<Tensor> sparse_attn_prefill_interface(
     if (is_sm90a) {
         Fwd_Sm90_Impl fwd_impl;
         fwd_impl.run(params, required_features);
-    } else if (is_sm100f) {
+    } else if (is_sm100f || is_sm110a) {
         if (h_q == 64) {
             Fwd_Sm100_Head64_Impl fwd_impl;
             fwd_impl.run(params, required_features);
@@ -239,10 +239,6 @@ std::vector<Tensor> sparse_attn_prefill_interface(
         } else {
             STD_TORCH_CHECK(false, "Unsupported h_q: ", h_q);
         }
-    } else if (is_sm110a) {
-        STD_TORCH_CHECK(h_q == 64, "Sparse prefill on SM110a supports only h_q == 64, got ", h_q);
-        Fwd_Sm100_Head64_Impl fwd_impl;
-        fwd_impl.run(params, required_features);
     } else {
         STD_TORCH_CHECK(false, "Unsupported architecture");
     }
